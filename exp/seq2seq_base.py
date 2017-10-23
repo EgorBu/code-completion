@@ -90,7 +90,7 @@ def prepare_seq2seq_model(token2ind=None, latent_dim=LATENT_DIM, optimizer="rmsp
     # something readable.
     ind2token = dict((i, char) for char, i in token2ind.items())
 
-    def decode_sequence(input_seq, start_ch="|"):
+    def decode_sequence(input_seq, start_ch="|", sep="", decoder_seq_len=decoder_seq_len):
         # Encode the input as state vectors.
         states_value = encoder_model.predict(input_seq)
 
@@ -121,7 +121,7 @@ def prepare_seq2seq_model(token2ind=None, latent_dim=LATENT_DIM, optimizer="rmsp
             # Update states
             states_value = [h, c]
 
-        return "".join(decoded_sentence)
+        return sep.join(decoded_sentence)
 
     return train_model, decode_sequence, ind2token
 
