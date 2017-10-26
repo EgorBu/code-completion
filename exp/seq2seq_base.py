@@ -177,7 +177,7 @@ class Seq2SeqBase:
         self._build()
 
     @staticmethod
-    def _prepare_emb(token2ind, name=None):
+    def _prepare_embeddings(token2ind, name=None):
         # default padding value is 0 - so index should start from 1
         num_tokens = len(token2ind) + 1
         emb_input_dim = num_tokens
@@ -187,11 +187,11 @@ class Seq2SeqBase:
                                 weights=[emb_weights], trainable=False, name=name)
         return encoder_emb
 
-    def _buid_encoder(self):
+    def _build_encoder(self):
         # Define an input sequence and process it.
         self.encoder_inputs = Input(shape=(None,), name="encoder_inputs")
-        self.encoder_in_emb = self._prepare_emb(self.enc_token2ind,
-                                                name="encoder_in_emb")(self.encoder_inputs)
+        self.encoder_in_emb = self._prepare_embeddings(self.enc_token2ind,
+                                                       name="encoder_in_emb")(self.encoder_inputs)
 
         if isclass(self.enc_rnn):
             # instantiate object
@@ -205,8 +205,8 @@ class Seq2SeqBase:
     def _build_decoder(self):
         # Set up the decoder, using `encoder_states` as initial state.
         self.decoder_inputs = Input(shape=(None,), name="decoder_inputs")
-        self.decoder_in_emb = self._prepare_emb(self.dec_token2ind,
-                                                name="decoder_in_emb")(self.decoder_inputs)
+        self.decoder_in_emb = self._prepare_embeddings(self.dec_token2ind,
+                                                       name="decoder_in_emb")(self.decoder_inputs)
         # We set up our decoder to return full output sequences,
         # and to return internal states as well. We don't use the
         # return states in the training model, but we will use them in inference.
@@ -256,7 +256,7 @@ class Seq2SeqBase:
         print("Max sequence length for inputs:", self.encoder_seq_len)
         print("Max sequence length for outputs:", self.decoder_seq_len)
 
-        self._buid_encoder()
+        self._build_encoder()
 
         self._build_decoder()
 
@@ -310,7 +310,3 @@ class Seq2SeqBase:
             states_value = [h, c]
 
         return sep.join(decoded_sentence)
-
-
-
-
